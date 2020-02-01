@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="hero-wrap hero-bread" style="background-image: url({% static 'images/bg_1.jpg' %});">
+<div class="container">
+<div class="row no-gutters slider-text align-items-center justify-content-center">
+<div class="col-md-9 ftco-animate text-center">
+    <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home' %}">Home</a></span> <span>Products</span></p>
+    <h1 class="mb-0 bread">Shop</h1>
+</div>
+</div>
+</div>
+</div>
+
+<section class="ftco-section">
+<div class="container">
+    <div class="title-box">
+        <h2>Featured</h2>
+    </div>
+<div class="row">
+{% for item in products %}
+{% if item.category == "featured" %}        
+    <div class="col-md-6 col-lg-3 ftco-animate">
+            <div class="product">
+        {% for image in item.productimage_set.all %}
+            {% if image.thumbnail == True and image.active == True %}
+                <a href="{% url 'single_product' item.slug %}" class="img-prod"><img class="img-fluid" src="/media/{{image.image}}" alt="Colorlib Template">
+            {% endif %}
+        {% endfor %}    
+            {% with key=item.id %}      
+                {% if item.sale != item.price %}
+                <span class="status">{{percentage_discount|dict_key:key}}%</span>
+                {% endif %}
+            {% endwith %}    
+                    <div class="overlay"></div>
+                </a>
+                <div class="text py-3 pb-4 px-3 text-center">
+                    <h3><a href="{% url 'single_product' item.slug %}">{{item.product_name}}</a></h3>
+                    <div class="d-flex">
+                        <div class="pricing">
+                            {% if item.sale != item.price %}
+                            <p class="price"><span class="mr-2 price-dc">৳{{item.price}}</span><span class="price-sale">${{item.sale}}</span></p>
+                            {% else %}
+                            <p class="price"><span class="mr-2 price-sale">৳{{item.price}}</span></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="bottom-area d-flex px-3">
+                        <div class="m-auto d-flex">
+                            <a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+                                <span><i class="ion-ios-menu"></i></span>
+                            </a>
+                            <a href="{% url 'single_product' item.slug %}" class="buy-now d-flex justify-content-center align-items-center mx-1">
+                                <span><i class="ion-ios-cart"></i></span>
+                            </a>
+                            <a href="#" class="heart d-flex justify-content-center align-items-center ">
+                                <span><i class="ion-ios-heart"></i></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+</div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        <div class="title-box">
+            <h2>New Arrival</h2>
+        </div>
+    <div class="row">
+    {% for item in products %}
+    {% if item.category == "new arrival" %}        
+        <div class="col-md-6 col-lg-3 ftco-animate">
+                <div class="product">
+            {% for image in item.productimage_set.all %}
+                {% if image.thumbnail == True and image.active == True %}
+                    <a href="{% url 'single_product' item.slug %}" class="img-prod"><img class="img-fluid" src="/media/{{image.image}}" alt="Colorlib Template">
+                {% endif %}
+            {% endfor %}    
+                {% with key=item.id %}      
+                    {% if item.sale != item.price %}
+                    <span class="status">{{percentage_discount|dict_key:key}}%</span>
+                    {% endif %}
+                {% endwith %}    
+                        <div class="overlay"></div>
+                    </a>
+                    <div class="text py-3 pb-4 px-3 text-center">
+                        <h3><a href="{% url 'single_product' item.slug %}">{{item.product_name}}</a></h3>
+                        <div class="d-flex">
+                            <div class="pricing">
+                                {% if item.sale != item.price %}
+                                <p class="price"><span class="mr-2 price-dc">৳{{item.price}}</span><span class="price-sale">${{item.sale}}</span></p>
+                                {% else %}
+                                <p class="price"><span class="mr-2 price-sale">৳{{item.price}}</span></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-area d-flex px-3">
+                            <div class="m-auto d-flex">
+                                <a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+                                    <span><i class="ion-ios-menu"></i></span>
+                                </a>
+                                <a href="{% url 'single_product' item.slug %}" class="buy-now d-flex justify-content-center align-items-center mx-1">
+                                    <span><i class="ion-ios-cart"></i></span>
+                                </a>
+                                <a href="#" class="heart d-flex justify-content-center align-items-center ">
+                                    <span><i class="ion-ios-heart"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+</div>
+</section>
+        
+<section class="ftco-section">
+    <div class="container">
+        <div class="title-box">
+            <h2>On Sale</h2>
+        </div>
+    <div class="row">
+    {% for item in products %}
+    {% if item.category == "on sale" %}        
+        <div class="col-md-6 col-lg-3 ftco-animate">
+                <div class="product">
+            {% for image in item.productimage_set.all %}
+                {% if image.thumbnail == True and image.active == True %}
+                    <a href="{% url 'single_product' item.slug %}" class="img-prod"><img class="img-fluid" src="/media/{{image.image}}" alt="Colorlib Template">
+                {% endif %}
+            {% endfor %}    
+                {% with key=item.id %}      
+                    {% if item.sale != item.price %}
+                    <span class="status">{{percentage_discount|dict_key:key}}%</span>
+                    {% endif %}
+                {% endwith %}    
+                        <div class="overlay"></div>
+                    </a>
+                    <div class="text py-3 pb-4 px-3 text-center">
+                        <h3><a href="{% url 'single_product' item.slug %}">{{item.product_name}}</a></h3>
+                        <div class="d-flex">
+                            <div class="pricing">
+                                {% if item.sale != item.price %}
+                                <p class="price"><span class="mr-2 price-dc">৳{{item.price}}</span><span class="price-sale">${{item.sale}}</span></p>
+                                {% else %}
+                                <p class="price"><span class="mr-2 price-sale">৳{{item.price}}</span></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-area d-flex px-3">
+                            <div class="m-auto d-flex">
+                                <a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+                                    <span><i class="ion-ios-menu"></i></span>
+                                </a>
+                                <a href="{% url 'single_product' item.slug %}" class="buy-now d-flex justify-content-center align-items-center mx-1">
+                                    <span><i class="ion-ios-cart"></i></span>
+                                </a>
+                                <a href="#" class="heart d-flex justify-content-center align-items-center ">
+                                    <span><i class="ion-ios-heart"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% endfor %}
+</div>
+</section>
+                
+
+<section class="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+<div class="container py-4">
+<div class="row d-flex justify-content-center py-5">
+<div class="col-md-6">
+    <h2 style="font-size: 22px;" class="mb-0">Subcribe to our Newsletter</h2>
+    <span>Get e-mail updates about our latest shops and special offers</span>
+</div>
+<div class="col-md-6 d-flex align-items-center">
+    <form action="#" class="subscribe-form">
+    <div class="form-group d-flex">
+        <input type="text" class="form-control" placeholder="Enter email address">
+        <input type="submit" value="Subscribe" class="submit px-3">
+    </div>
+    </form>
+</div>
+</div>
+</div>
+</section>
+{% endblock %}
