@@ -3,7 +3,8 @@ from products.models import Product
 
 # Create your models here.
 class Cart(models.Model):
-    #items = models.ManyToManyField(CartItem, blank=True) 
+    #items = models.ManyToManyField(CartItem, blank=True)
+    coupon_discount = models.DecimalField(max_digits=100, decimal_places=2, default=0.00) 
     total = models.DecimalField(max_digits=100, decimal_places=2, default=0.00)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

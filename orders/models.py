@@ -10,8 +10,15 @@ User = get_user_model()
 
 STATUS_CHOICES = (
     ("Started", "Started"),
+    ("Confirmed", "Confirmed"),
     ("Abandoned", "Abandoned"),
     ("Finished", "Finished"),
+)
+
+PAYMENT_CHOICES = (
+    ("Cash in delivery", "Cash in delivery"),
+    ("Bkash", "Bkash"),
+    ("Rocket", "Rocket"),
 )
 
 class Order(models.Model):
@@ -21,7 +28,9 @@ class Order(models.Model):
     #address
     order_id = models.CharField(max_length=120, default="ABC", unique=True)
     sub_total = models.DecimalField(max_digits=1000, decimal_places=2, default=0.00)
-    tax_total = models.DecimalField(max_digits=1000, decimal_places=2, default=0.00)
+    delivery_charge = models.DecimalField(max_digits=1000, decimal_places=2, default=50.00)
+    coupon_discount = models.DecimalField(max_digits=1000, decimal_places=2, default=0.00)
+    payment_method = models.CharField(max_length=120, choices=PAYMENT_CHOICES, default="Cash in delivery")
     final_total = models.DecimalField(max_digits=1000, decimal_places=2, default=0.00)
     status = models.CharField(max_length=120, choices=STATUS_CHOICES, default="Started")
     
@@ -30,3 +39,11 @@ class Order(models.Model):
 
     def __str__(self):
         return self.order_id
+
+class Coupon(models.Model):
+    coupon_code = models.CharField(max_length = 10, default="", unique = True)
+    coupon_discount = models.DecimalField(max_digits=1000, decimal_places=2, default=0.00)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.coupon_code

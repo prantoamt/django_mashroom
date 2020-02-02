@@ -114,20 +114,23 @@
                 <p class="d-flex">
             
                     <span>Subtotal</span>
-                    <span>৳{{cart.total}}</span>
+                    <span>৳{{order.sub_total}}</span>
                 </p>
                 <p class="d-flex">
                     <span>Delivery</span>
-                    <span>৳0.00</span>
+                    <span>৳{{order.delivery_charge}}</span>
                 </p>
                 <p class="d-flex">
                     <span>Discount</span>
-                    <span>৳0.00</span>
+                    <span>৳{{order.coupon_discount}}</span>                    
                 </p>
+                <!-- {% if order.coupon_discount > 0 %}
+                    <small class="text-muted"><span class="badge badge-success">Coupon discount</span></small>
+                {% endif %} -->
                 <hr>
                 <p class="d-flex total-price">
                     <span>Total</span>
-                    <span>৳{{cart.total}}</span>
+                    <span>৳{{order.final_total}}</span>
                 </p>
             </div>
         </div>

@@ -162,13 +162,13 @@
                         {% endfor %}
                         {% endwith %}
                       <div class="text py-3 pb-4 px-3 text-center">
-                          <h3><a href="#">{{item.product_name}}</a></h3>
+                          <h3><a href="{% url 'single_product' item.slug %}">{{item.product_name}}</a></h3>
                           <div class="d-flex">
                               <div class="pricing">
-                                {% if item.sale > 0 %}
-                                <p class="price"><span class="mr-2 price-dc">${{item.price}}</span><span class="price-sale">${{item.sale}}</span></p>
+                                {% if item.sale != item.price %}
+                                <p class="price"><span class="mr-2 price-dc">৳{{item.price}}</span><span class="price-sale">৳{{item.sale}}</span></p>
                                 {% else %}
-                                <p class="price"><span class="mr-2 price-sale">${{item.price}}</span></p>
+                                <p class="price"><span class="mr-2 price-sale">৳{{item.price}}</span></p>
                                 {% endif %}
                               </div>
                           </div>

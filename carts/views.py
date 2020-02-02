@@ -2,7 +2,9 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
 from .models import Cart, CartItem
 from products.models import Product 
+from orders.models import Coupon
 from products.dict_key import dict_key
+from django.contrib import messages
 # Create your views here.
 
 def viewCart(request):
@@ -82,6 +84,7 @@ def update_cart(request, slug):
     if created:
         print ("yeah")
 
+    
     if update_qty and qty:
         if int(qty) == 0:
             cart_item.delete()
@@ -115,8 +118,46 @@ def update_cart(request, slug):
             new_total = new_total+ line_total
     request.session['item_count'] = cart.cartitem_set.count()
     cart.total = float(new_total)
+    cart.total = new_total - float(cart.coupon_discount)
     cart.save() 
     return HttpResponseRedirect(reverse("viewCart"))               
 
 
+def coupon(request):
+    print("Called")
+    try:
+        coupon_code = request.GET.get('cpn')
+        print(coupon_code)
+    except:
+        coupon_code = None
+        messages.info(request,'')
+        messages.info(request,'No Coupon Found')
+
+    try:
+        the_id = request.session['cart_id']
+        cart = Cart.objects.get(id=the_id)
+    except:
+        pass
+
+    if coupon_code:
+        try:
+            coupon_object = Coupon.objects.get(coupon_code=coupon_code)
+            cpn_discount = coupon_object.coupon_discount
+            if(cart.total > 500):
+                if cart.coupon_discount == 0:
+                    cart.coupon_discount = cpn_discount
+                    cart.total = (cart.total) - (cart.coupon_discount)
+                    cart.save()
+                else:
+                    messages.info(request, 'Coupon is already added')        
+            else:
+                messages.info(request, 'You have to shop more than 500 taka to apply this coupon')        
+
+        except:
+            messages.info(request,'')
+            messages.info(request, 'No Coupon Found')  
+
     
+    return HttpResponseRedirect(reverse("viewCart"))
+
+        

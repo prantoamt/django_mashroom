@@ -22,15 +22,22 @@ def checkout(request):
         new_order = Order(cart=cart)
         new_order.user = request.user
         new_order.order_id = id_generator()
-        new_order.save()
     except:
         HttpResponseRedirect(reverse('viewCart'))
 
     if new_order.status == "Finished":
-        # cart.delete()
         del request.session['cart_id']
         del request.session['item_count']
-    
+    ##Update order DB
+    new_order.coupon_discount = cart.coupon_discount
+    new_order.sub_total = cart.total + cart.coupon_discount
+    new_subtotal = float(new_order.sub_total)
+    new_delivery = float(new_order.delivery_charge)
+    new_coupon = float(new_order.coupon_discount)
+    raw_total = (new_subtotal + new_delivery) - new_coupon
+    new_order.final_total = float(raw_total)
+    new_order.save()
+
     discount = {}
     total_price = 0
     total_discount = 0
@@ -57,3 +64,5 @@ def checkout(request):
         'discount': discount}
     template = "order/order.html"
     return render(request, template, context)
+
+    
