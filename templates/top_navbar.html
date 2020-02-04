@@ -46,12 +46,13 @@
               <a href="{% url 'logout' %}" class="nav-link">Logout</a>
               {% endif %}            
           </li>
-          <li class="nav-item cta cta-colored"><a href="{% url 'viewCart' %}" class="nav-link"><span class="icon-shopping_cart"></span>
-            {% if not request.session.item_count %}
-                [0]
-                {% else %}
-                [{{request.session.item_count}}]
-                {% endif %}</a></li>
+          <li class="nav-item cta cta-colored"><a href="{% url 'viewCart' %}" class="nav-link"><span id="cart_menu" class="icon-shopping_cart">
+              {% if not request.session.item_count %}
+              [0]
+              {% else %}
+              [{{request.session.item_count}}]
+              {% endif %}</a></li>
+          </span>
           
         </ul>
       </div>

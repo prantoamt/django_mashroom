@@ -24,7 +24,7 @@
                 {% endfor %}  
               </div>
               <div class="col-lg-6 product-details pl-md-5 ftco-animate">
-                  <h3>Bell Pepper</h3>
+                  <h3>{{product.product_name}}</h3>
                   <div class="rating d-flex">
                           <p class="text-left mr-4">
                               <a href="#" class="mr-2">5.0</a>
@@ -44,7 +44,7 @@
                       {% if product.sale != product.price %}
                         <p class="price"><span>৳{{product.sale}}</span></p>
                       {% elif product.sale == product.price %}
-                        <p class="price"><span>${{product.price}}</span></p>
+                        <p class="price"><span>৳{{product.price}}</span></p>
                       {% endif %}    
                   <p>{{product.description}}</p>
                       <div class="row mt-4">
@@ -60,27 +60,30 @@
                     </select>
                   </div> -->
                   </div>
-                          </div>
-                          <div class="w-100"></div>
-                          <!-- <div class="input-group col-md-6 d-flex mb-3">
+                  </div>
+                  <div class="w-100"></div>
+                  <div class="input-group col-md-6 d-flex mb-3">
                    <span class="input-group-btn mr-2">
-                      <button type="button" class="quantity-left-minus btn"  data-type="minus" data-field="">
+                      <button id='decrease_button' type="button" class="quantity-left-minus btn"  data-type="minus" data-field="">
                      <i class="ion-ios-remove"></i>
                       </button>
                       </span>
                    <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
                    <span class="input-group-btn ml-2">
-                      <button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
+                      <button id='increase_button' type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
                        <i class="ion-ios-add"></i>
                    </button>
                    </span>
-                </div> -->
+                </div>
                 <div class="w-100"></div>
                 <div class="col-md-12">
                     <p style="color: #000;">{{product.stock}} pc available</p>
                 </div>
             </div>
-            <p><a href="{% url 'update_cart' product.slug %}" class="btn btn-black py-3 px-5">Add to Cart</a></p>
+            <p><a id="add_to_cart" href="#" class="btn btn-black py-3 px-5">
+                <span id="circle" class="" role="status"></span>Add to Cart
+              </a></p>
+              <span id='msg' style="color: red;" class="ml-5"></span>
               </div>
           </div>
       </div>
@@ -295,16 +298,62 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-
-          <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart color-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                      </p>
-        </div>
-      </div>
     </div>
-  </footer>
+    <span id="circle" class="spinner-border" role="status"></span>
+
+<script>
+
+  $('#decrease_button').click(function(e){
+        var quantity = $('#quantity').val();
+        quantity = parseInt(quantity) - 1;
+        if(quantity > 0){
+          $('#quantity').val(quantity);
+        }
+        else{
+          alert("Quantity can not be Zero");
+        }
+        
+    });
+
+  $('#increase_button').click(function(e){
+      var quantity = $('#quantity').val();
+      quantity = parseInt(quantity) + 1;
+      $('#quantity').val(quantity);
+  });
+
+  $('#add_to_cart').click(function(e){
+    e.preventDefault();
+    $('#circle').addClass('spinner-border');
+    $('#circle').addClass('spinner-border-sm');
+    $('#circle').addClass('mr-3');
+    var quantity = $('#quantity').val();
+    $.ajax({
+      type:'GET',
+      url:'{% url "update_cart" product.slug %}',
+      data: {
+        qty: quantity,
+      },
+      success: function(result){
+        if(result['out_of_stock']){
+          $('#msg').text("Out of stock");
+          $('#circle').removeClass('spinner-border');
+          $('#circle').removeClass('spinner-border');
+          $('#circle').removeClass('spinner-border-sm');
+          $('#circle').removeClass('mr-3');        
+        }
+        else{
+        $('#circle').removeClass('spinner-border');
+        $('#circle').removeClass('spinner-border');
+        $('#circle').removeClass('spinner-border-sm');
+        $('#circle').removeClass('mr-3');        
+        $('#add_to_cart').text("Added to cart");
+        let items = result['cart_item'] ;
+        $('#cart_menu').text("["+items+"]");
+        }
+        
+      }
+    });
+  });
+</script>
       
 {% endblock %}

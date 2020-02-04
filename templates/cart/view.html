@@ -2,6 +2,7 @@
 
 {% block content %}
 <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 {% load static %}
 {% if empty %}
     <div class="alert alert-warning text-center" style="font-size: 30px;" role="alert">
@@ -51,30 +52,32 @@
                               </td>
                               
                               <td class="price">৳
-                                {% if item.product.sale > 0 %}
-                                  {{item.product.sale}}
+                                {% if item.product.sale != item.product.price %}
+                                  <span id="price_value">{{item.product.sale}}</span>
                                   {% with key=item.product.id %}
                                     {% if discount|dict_key:key > 0 %}
                                     <span class="badge badge-success">{{discount|dict_key:key}}% discount</span>
                                     {% endif %}
                                   {% endwith %}
                                 {% else %}
-                                  {{item.product.price}}  
+                                  <span id="price_value">{{item.product.price}}</span>  
                                 {% endif %}
                               </td>
                               
                               <td class="quantity">
                                   <div class="input-group mb-3">
-                                      <a href="{% url 'update_cart' item.product.slug %}?qty=-1">
+                                      <a id="minus">
                                         <i class="fa fa-minus ml-5 mr-2" ></i></a>
-                                        {{item.quantity}}
-                                        <a href="{% url 'update_cart' item.product.slug %}?qty=+1">
+                                        <span id="quantity_value">{{item.quantity}}</span>
+                                        <a id='plus'>
                                           <i class="fa fa-plus ml-2"></i>
                                         </a>
+                                        <span class="ml-2" style="color: red;" id="out_of_stock"></span>
+                                        
                                 </div>
                             </td>
                               
-                              <td class="total">৳{{item.line_total}}</td>
+                              <td class="total">৳ <span id="total_price">{{item.line_total}}</span></td>
                             </tr><!-- END TR-->
                             {% endfor %}
                           </tbody>
@@ -128,7 +131,7 @@
                       <h3>Cart Totals</h3>
                       <p class="d-flex">
                           <span>Subtotal</span>
-                          <span>৳{{cart.total|add:cart.coupon_discount}}</span>
+                          <span id='sub_total'>৳{{cart.total|add:cart.coupon_discount}}</span>
                       </p>
                       <p class="d-flex">
                           <span>Delivery</span>
@@ -144,7 +147,7 @@
                       <hr>
                       <p class="d-flex total-price">
                           <span>Total</span>
-                          <span>৳{{cart.total}}</span>
+                          ৳<span id="total">{{cart.total}}</span>
                           <span class="badge badge-success">{{discount|dict_key:"total_discount"}}% savings</span>
                       </p>
                   </div>
@@ -174,4 +177,96 @@
   </section>
 {% endif %}
 
+<script>
+    //To reduce product quantity
+    $('.table tbody').on('click', '#minus', function(e){
+      var currow = $(this).closest('tr'); //Get Table rows near to the cliecked event
+      var product_name = currow.find('td:eq(2) h3').text(); //get the text of 3rd column
+      var price = currow.find('td:eq(3) #price_value').text().trim(); ////get the text of 4th column
+      var quantity = currow.find('td:eq(4) #quantity_value').text().trim(); //get the text of 5th column
+      var line_total = currow.find('td:eq(5) #total_price').text().trim();
+      // We need slug to match with update_cart url. slug can be found by product name,
+      // converting them to lower case and joining spaces by hypen
+      product_name = product_name.toLowerCase(); 
+      var product_name_splitted = product_name.split(" ");
+      var slug = product_name_splitted.join("-");
+
+      var new_line_total = 0;
+      quantity = parseInt(quantity) - 1;
+
+      if(quantity > 0){
+        $.ajax({
+          type:'GET',
+          url: slug,
+          data: {
+            qty: quantity,
+          },
+          success: function(result){
+            new_line_total = parseInt(quantity) * parseInt(price);
+            currow.find('td:eq(4) #quantity_value').text(quantity);
+            currow.find('td:eq(5) #total_price').text(new_line_total);
+            //on successfull query, update the value of Sub total & total
+            let cart_total = result.cart_total;
+            let coupon_discount = result.coupon_discount;
+            let cart_sub_total = parseInt(cart_total) + parseInt(coupon_discount);
+            $('#total').text(cart_total);
+            $('#sub_total').text(cart_sub_total);
+          }
+        });
+      }
+      else{
+        alert("To remove product, click  on the cross button!");
+      }
+      
+    });      
+  
+    //To increase product quantity
+    $('.table tbody').on('click', '#plus', function(e){
+        var currow = $(this).closest('tr'); //Get Table rows near to the cliecked event
+        var product_name = currow.find('td:eq(2) h3').text(); //get the text of 3rd column
+        var price = currow.find('td:eq(3) #price_value').text().trim(); ////get the text of 4th column
+        var quantity = currow.find('td:eq(4) #quantity_value').text().trim(); //get the text of 5th column
+        var line_total = currow.find('td:eq(5) #total_price').text().trim();
+        // We need slug to match with update_cart url. slug can be found by product name,
+        // converting them to lower case and joining spaces by hypen
+        product_name = product_name.toLowerCase(); 
+        var product_name_splitted = product_name.split(" ");
+        var slug = product_name_splitted.join("-");
+
+        var new_line_total = 0;
+        quantity = parseInt(quantity) + 1;
+
+        if(quantity > 0){
+          $.ajax({
+            type:'GET',
+            url: slug,
+            data: {
+              qty: quantity,
+            },
+            success: function(result){
+              if(result['out_of_stock']){
+                currow.find('td:eq(4) #out_of_stock').text("Out of stock");
+              }
+              else{
+              //on successfull query and if product is not out of stock, update the value of Sub total & total
+              new_line_total = parseInt(quantity) * parseInt(price);
+              currow.find('td:eq(4) #quantity_value').text(quantity);
+              currow.find('td:eq(5) #total_price').text(new_line_total);      
+              let cart_total = result.cart_total;
+              let coupon_discount = result.coupon_discount;
+              let cart_sub_total = parseInt(cart_total) + parseInt(coupon_discount);
+              $('#total').text(cart_total);
+              $('#sub_total').text(cart_sub_total);
+              }
+            }
+          });
+        }
+        else{
+          alert("To remove product, click  on the cross button!");
+        }
+        
+      });
+  
+  </script>
+  
 {% endblock %}

@@ -5,18 +5,28 @@ from products.models import Product
 from orders.models import Coupon
 from products.dict_key import dict_key
 from django.contrib import messages
+from django.http import JsonResponse
 # Create your views here.
 
+
+##First of checks
 def viewCart(request):
+    print("view Cart")
     cart = None
+
     try:
         the_id = request.session['cart_id']
     except:
         the_id = None
+    
     if the_id:                
         cart = Cart.objects.get(id=the_id)
+        if (cart.total < 0):
+                cart.total = 0
         amount = cart.total
+    
         if(amount==0):
+            cart.coupon_discount = 0
             massege = "Your cart is empty"
             context = {'cart':cart, 'empty': massege}         
             template = "cart/view.html"
@@ -26,6 +36,7 @@ def viewCart(request):
         total_price = 0
         total_discount = 0
         cart_items =  cart.cartitem_set.all()
+
         for i in range(len(cart_items)):
             item = cart_items[i].product.id
             price = cart_items[i].product.price
@@ -33,10 +44,12 @@ def viewCart(request):
             sale = cart_items[i].product.sale
             less = price - sale
             total_discount = total_discount+less
+
             if(price > 0):
                 discount[item] = int((less/price)*100)
             else:
                 discount[item] = 0    
+
         if(total_price > 0):
             percent_discount = int((total_discount/total_price)*100)
         else:
@@ -45,6 +58,7 @@ def viewCart(request):
         print(discount)        
         context = {'cart':cart,
                     'discount': discount}
+
     else:
         massege = "Your cart is empty"
         context = {'cart':cart, 'empty': massege}
@@ -56,8 +70,11 @@ def viewCart(request):
 
 def update_cart(request, slug):
     request.session.set_expiry(120000)
+    ##Check if the method
     try:
         qty = request.GET.get('qty')
+        print("Quantity Got: ", qty)
+        print("Slug Got: ", slug)
         update_qty = True
     except:
         qty = None
@@ -83,20 +100,42 @@ def update_cart(request, slug):
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     if created:
         print ("yeah")
-
     
     if update_qty and qty:
+
         if int(qty) == 0:
             cart_item.delete()
-        elif int(qty) == -1:
-            cart_item.quantity = cart_item.quantity-1
-            cart_item.save()    
-        elif int(qty) == +1:
-            cart_item.quantity = cart_item.quantity+1
-            cart_item.save()    
-        else:
-            cart_item.quantity = qty
+
+            if (cart.total < 0):
+                cart.total = 0                    
+
+        elif (qty == "102" and cart_item.product.stock > 0):
+            cart_item.quantity += 1
             cart_item.save()
+
+        elif (qty == "101" and cart_item.product.stock > 0):
+            cart_item.quantity -=1
+
+            if(cart_item.quantity==0):
+                print("item", cart_item.quantity)
+                cart_item.delete()
+                request.session['item_count']=0
+            else:
+                cart_item.save()    
+
+        else:
+            if(cart_item.product.stock >= int(qty)):
+                print("stk: ", cart_item.product.stock)
+                cart_item.quantity = int(qty)
+                cart_item.save()
+            else:
+                print("Out of stock");    
+                response = JsonResponse({'out_of_stock': True,
+                                'cart_item': request.session['item_count'],
+                                'cart_total': cart.total,
+                                'coupon_discount': cart.coupon_discount})
+                return response
+
     else:
         pass
     # if not cart_item in cart.items.all():
@@ -106,7 +145,7 @@ def update_cart(request, slug):
 
     new_total = 0.00
     for item in cart.cartitem_set.all():
-        if (item.product.sale > 0):
+        if (item.product.sale != item.product.price):
             line_total = float(item.product.sale)*item.quantity
             item.line_total = line_total
             item.save()
@@ -114,12 +153,21 @@ def update_cart(request, slug):
         else:
             line_total = float(item.product.price)*item.quantity
             item.line_total = line_total
+            print(line_total)
             item.save()
             new_total = new_total+ line_total
     request.session['item_count'] = cart.cartitem_set.count()
     cart.total = float(new_total)
     cart.total = new_total - float(cart.coupon_discount)
-    cart.save() 
+    cart.save()
+
+    if request.is_ajax():
+        print(":ajax")
+        response = JsonResponse({'cart_item': request.session['item_count'],
+                                'cart_total': cart.total,
+                                'coupon_discount': cart.coupon_discount})
+        return response
+
     return HttpResponseRedirect(reverse("viewCart"))               
 
 
