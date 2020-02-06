@@ -22,15 +22,20 @@ def home(request):
 def products(request):
     products = product.objects.all()
     percentage_discount = {}
+    seen = set()
+    categories = []
     for item in products:
         price = item.price
         sale = item.sale
         discount = price - sale
         percentage_discount[item.id] = int((discount/price)*100)
+        categories.append(item.category)
+    categories = list(dict.fromkeys(categories))    
     template = 'products_template/products.html'
    
     context = {'products' : products,
-                'percentage_discount' : percentage_discount}
+                'percentage_discount' : percentage_discount,
+                'categories': categories}
     return render(request, template, context)
 
 def single(request, slug):

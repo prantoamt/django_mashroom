@@ -90,58 +90,65 @@
                   <div class="cart-total mb-3">
                       <h3>Coupon Code</h3>
                       <p>Enter your coupon code if you have one</p>
-              <form action="{% url 'coupon' %}" class="info" method="GET"> {% csrf_token %}
+              
                 <div class="form-group">
                     <label for="">Coupon code</label>
-                  <input type="text" class="form-control text-left px-3" name="cpn" id="crpn" placeholder="">
+                  <input type="text" class="form-control text-left px-3" id="coupon_code" placeholder="">
                 </div>
-                <p><button type="submit" class="btn btn-primary py-3 px-4">Apply Coupon</button></p>
-              </form>
+                <p><a href="" id="apply_coupon" class="btn btn-primary py-3 px-4"> 
+                    Apply Coupon</a>
+                </p>
+              
                   </div>
-                {% if messages %}
-                  {% for message in messages %}
-                  <div class="alert alert-info"> {{message}} </div>
-                  {% endfor %}
-                {% endif %}  
+               <div id="coupon_alert"></div>
                   
               </div>
               <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
                   <div class="cart-total mb-3">
-                      <h3>Estimate shipping and tax</h3>
+                      <h3>Estimate shipping charge</h3>
                       <p>Enter your destination to get a shipping estimate</p>
                         <form action="#" class="info">
                 <div class="form-group">
-                    <label for="">Country</label>
-                  <input type="text" class="form-control text-left px-3" placeholder="">
+                    <label for="">District</label>
+                    <select id="district_select">
+                        <option  value="" selected>--------------</option>
+                        {% for district in districts %}
+                        <option value="{{district.district_name}}">{{district.district_name}}</option>
+                        {% endfor %}
+                    </select>                     
                 </div>
+                
                 <div class="form-group">
-                    <label for="country">State/Province</label>
-                  <input type="text" class="form-control text-left px-3" placeholder="">
+                  <label for="">Area </label>  
+                  <select id="area_select">
+                        <option value="" selected>--------------</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label for="country">Zip/Postal Code</label>
-                  <input type="text" class="form-control text-left px-3" placeholder="">
+                 <div class="form-group">
+                    <label for="country">BDT</label>
+                  <input id="delivery_charge" type="text" class="form-control text-left px-3" placeholder="" readonly>
                 </div>
               </form>
                   </div>
-                  <p><a href="#" class="btn btn-primary py-3 px-4">Estimate</a></p>
+                  <p><a id="estimate" href="#" class="btn btn-primary py-3 px-4">Estimate</a></p>
               </div>
               <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
                   <div class="cart-total mb-3">
                       <h3>Cart Totals</h3>
                       <p class="d-flex">
                           <span>Subtotal</span>
-                          <span id='sub_total'>৳{{cart.total|add:cart.coupon_discount}}</span>
+                          ৳<span id='sub_total'>{{cart.total|add:cart.coupon_discount}}</span>
                       </p>
                       <p class="d-flex">
                           <span>Delivery</span>
-                          <span>৳0</span>
+                          ৳<span id="delivery_charge_cart">0</span>
                       </p>
                       <p class="d-flex">
-                          <span>Discount</span>
-                          <span>৳{{cart.coupon_discount}}</span>
+                          <span class="mr-5">Discount</span>
+                          ৳<span id="discount_cart">{{cart.coupon_discount}}</span>
+                          <span id="ajax_discount_tag" ></span>
                           {% if cart.coupon_discount > 0 %}
-                          <span class="badge badge-success">Coupon Discount</span>
+                            <span class="badge badge-success">Coupon Discount</span>
                           {% endif %}
                       </p>
                       <hr>
@@ -151,7 +158,7 @@
                           <span class="badge badge-success">{{discount|dict_key:"total_discount"}}% savings</span>
                       </p>
                   </div>
-                  <p><a href="{% url 'checkout' %}" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>
+                  <p><a id="proceed_to_order" href="" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>
               </div>
           </div>
           </div>
@@ -178,7 +185,8 @@
 {% endif %}
 
 <script>
-    //To reduce product quantity
+    //Reduce product quantity both in front-end and database
+    // Also adjusts all others fields on front-end according to the changes
     $('.table tbody').on('click', '#minus', function(e){
       var currow = $(this).closest('tr'); //Get Table rows near to the cliecked event
       var product_name = currow.find('td:eq(2) h3').text(); //get the text of 3rd column
@@ -220,7 +228,8 @@
       
     });      
   
-    //To increase product quantity
+    //Increases product quantity on both front-end and database
+    // Also adjusts all others fields on front-end according to the changes
     $('.table tbody').on('click', '#plus', function(e){
         var currow = $(this).closest('tr'); //Get Table rows near to the cliecked event
         var product_name = currow.find('td:eq(2) h3').text(); //get the text of 3rd column
@@ -266,7 +275,126 @@
         }
         
       });
-  
+
+      //Updates delivery charge on district and area option change
+      //Doest not update database and cart. Only updates the delivery charge field on
+      //top of the 'Estimate' button
+      $('#district_select').change(function(e){
+          $("#area_select option").remove();
+          $("#delivery_charge").val('');
+          var selected_area = $('#district_select option:selected').text();
+          $.ajax({
+            type:'GET',
+            url: 'deliverycharge',
+            data: {
+              dst: selected_area,
+            },
+            success: function(result){
+              $("#area_select option").remove();
+              $('#area_select').append("<option value=''>"+'-----------'+"</option>");
+              for (let i = 0; i < (Object.keys(result)).length; i++){
+                let area_name = Object.keys(result)[i];
+                $('#area_select').append("<option value="+area_name+">"+area_name+"</option>");
+              }
+
+              $("#area_select").change(function(e){
+                
+                $("#delivery_charge").val(result[$("#area_select option:selected").text().trim()]);
+              });
+
+            }  
+          });
+      });
+
+      // Apply Coupon (Updates database without coupon discount value). 
+      // Coupon Discount in on updated in front-end
+      $("#apply_coupon").on('click',function(e){
+        e.preventDefault();
+        $('#coupon_alert').removeClass("alert alert-info");
+        $('#coupon_alert').text("");
+        $('#circle').addClass('spinner-border');
+        $('#circle').addClass('spinner-border-sm');
+        $('#circle').addClass('mr-3');
+
+        var coupon_code = $("#coupon_code").val();
+        var URL = "{% url 'coupon' %}";
+        $.ajax({
+          type:'GET',
+          url: URL,
+          data: {
+            cpn: coupon_code,
+          },
+          success: function(result){
+            $('#coupon_alert').addClass("alert alert-info");
+            $('#coupon_alert').text(result['message']);    
+
+            var discount  = result["coupon_discount"];
+            
+            if(parseInt(discount) > 0){
+              var cart_total = result["cart_total"];
+              var delivery_charge = $("#delivery_charge_cart").text().trim();
+              if(delivery_charge== ""){
+                delivery_charge = 0.0;
+              }
+
+              let sub_total = parseInt(discount) + parseInt(cart_total);
+              let total = sub_total + parseInt(delivery_charge) - parseInt(discount);
+              if(parseInt($("#discount_cart").text()) < 0){
+                $("#ajax_discount_tag").addClass('badge badge-success');
+                $("#ajax_discount_tag").text("Coupon Discount");                        
+              }
+              $("#sub_total").text(sub_total);
+              $("#discount_cart").text(discount);
+              $("#total").text(total);
+            }
+
+          }
+        });
+
+      });
+
+    //Estimate total cost  
+    $("#estimate").on('click',function(e){
+      e.preventDefault();
+
+      var delivery_charge = $("#delivery_charge").val().trim();
+      
+      if(parseInt(delivery_charge) > 0){
+        var sub_total = $("#sub_total").text().trim();
+        var discount = $("#discount_cart").text().trim();
+        var total = $("#total").text().trim();
+
+        var final_total = parseInt(sub_total) + parseInt(delivery_charge) - parseInt(discount);
+        $("#delivery_charge_cart").text(delivery_charge);
+        $("#total").text(final_total);      
+      }
+      else{
+        delivery_charge = 0
+        var sub_total = $("#sub_total").text().trim();
+        var discount = $("#discount_cart").text().trim();
+        var total = $("#total").text().trim();
+
+        var final_total = parseInt(sub_total) + parseInt(delivery_charge) - parseInt(discount);
+        $("#delivery_charge_cart").text(delivery_charge);
+        $("#total").text(final_total);
+      }
+
+    });      
+
+    $("#proceed_to_order").on('click', function(e){
+      e.preventDefault();
+      var delivery_charge = parseInt($("#delivery_charge_cart").text());
+      var sub_total = parseInt($("#sub_total").text());
+      if( delivery_charge > 0 ){
+        var URL = "{% url 'checkout' %}";
+        window.location.href = "{% url 'checkout' %}?dlvry="+delivery_charge+"&sbtotal="+sub_total;
+
+      }
+      else{
+        alert("Please Estimate Shipping Charge First!");
+      }
+    });
+
   </script>
   
 {% endblock %}

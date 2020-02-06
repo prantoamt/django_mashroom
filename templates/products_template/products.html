@@ -14,13 +14,26 @@
 </div>
 
 <section class="ftco-section">
-<div class="container">
-    <div class="title-box">
-        <h2>Featured</h2>
-    </div>
+    <!-- <div class="row justify-content-center">
+        <div class="col-md-10 mb-5 text-center">
+            <ul class="product-category">
+                <li id="all"><a href="#" class="active">All</a></li>
+                {% for category in categories %}
+                <li><a href="">{{category}}</a></li>
+                {% endfor %}
+            </ul>
+    </div> -->
+
+{% for category in categories %}
+
+<div id="featured_container" class="container">
+<div class="title-box">
+    <h2>{{category}}</h2>
+</div> 
+                
 <div class="row">
 {% for item in products %}
-{% if item.category == "featured" %}        
+{% if item.category == category and item.stock > 0 %}        
     <div class="col-md-6 col-lg-3 ftco-animate">
             <div class="product">
         {% for image in item.productimage_set.all %}
@@ -65,116 +78,10 @@
         {% endif %}
         {% endfor %}
 </div>
-</section>
 
-<section class="ftco-section">
-    <div class="container">
-        <div class="title-box">
-            <h2>New Arrival</h2>
-        </div>
-    <div class="row">
-    {% for item in products %}
-    {% if item.category == "new arrival" %}        
-        <div class="col-md-6 col-lg-3 ftco-animate">
-                <div class="product">
-            {% for image in item.productimage_set.all %}
-                {% if image.thumbnail == True and image.active == True %}
-                    <a href="{% url 'single_product' item.slug %}" class="img-prod"><img class="img-fluid" src="/media/{{image.image}}" alt="Colorlib Template">
-                {% endif %}
-            {% endfor %}    
-                {% with key=item.id %}      
-                    {% if item.sale != item.price %}
-                    <span class="status">{{percentage_discount|dict_key:key}}%</span>
-                    {% endif %}
-                {% endwith %}    
-                        <div class="overlay"></div>
-                    </a>
-                    <div class="text py-3 pb-4 px-3 text-center">
-                        <h3><a href="{% url 'single_product' item.slug %}">{{item.product_name}}</a></h3>
-                        <div class="d-flex">
-                            <div class="pricing">
-                                {% if item.sale != item.price %}
-                                <p class="price"><span class="mr-2 price-dc">৳{{item.price}}</span><span class="price-sale">${{item.sale}}</span></p>
-                                {% else %}
-                                <p class="price"><span class="mr-2 price-sale">৳{{item.price}}</span></p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="bottom-area d-flex px-3">
-                            <div class="m-auto d-flex">
-                                <a href="{% url 'single_product' item.slug %}" class="add-to-cart d-flex justify-content-center align-items-center text-center">
-                                    <span><i class="ion-ios-menu"></i></span>
-                                </a>
-                                <a href="" class="buy-now d-flex justify-content-center align-items-center mx-1">
-                                    <span><i class="ion-ios-cart"></i></span>
-                                </a>
-                                <!-- <a href="#" class="heart d-flex justify-content-center align-items-center ">
-                                    <span><i class="ion-ios-heart"></i></span>
-                                </a> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-</div>
-</section>
-        
-<section class="ftco-section">
-    <div class="container">
-        <div class="title-box">
-            <h2>On Sale</h2>
-        </div>
-    <div class="row">
-    {% for item in products %}
-    {% if item.category == "on sale" %}        
-        <div class="col-md-6 col-lg-3 ftco-animate">
-                <div class="product">
-            {% for image in item.productimage_set.all %}
-                {% if image.thumbnail == True and image.active == True %}
-                    <a href="{% url 'single_product' item.slug %}" class="img-prod"><img class="img-fluid" src="/media/{{image.image}}" alt="Colorlib Template">
-                {% endif %}
-            {% endfor %}    
-                {% with key=item.id %}      
-                    {% if item.sale != item.price %}
-                    <span class="status">{{percentage_discount|dict_key:key}}%</span>
-                    {% endif %}
-                {% endwith %}    
-                        <div class="overlay"></div>
-                    </a>
-                    <div class="text py-3 pb-4 px-3 text-center">
-                        <h3><a href="{% url 'single_product' item.slug %}">{{item.product_name}}</a></h3>
-                        <div class="d-flex">
-                            <div class="pricing">
-                                {% if item.sale != item.price %}
-                                <p class="price"><span class="mr-2 price-dc">৳{{item.price}}</span><span class="price-sale">${{item.sale}}</span></p>
-                                {% else %}
-                                <p class="price"><span class="mr-2 price-sale">৳{{item.price}}</span></p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="bottom-area d-flex px-3">
-                            <div class="m-auto d-flex">
-                                <a href="{% url 'single_product' item.slug %}" class="add-to-cart d-flex justify-content-center align-items-center text-center">
-                                    <span><i class="ion-ios-menu"></i></span>
-                                </a>
-                                <a href="" class="buy-now d-flex justify-content-center align-items-center mx-1">
-                                    <span><i class="ion-ios-cart"></i></span>
-                                </a>
-                                <!-- <a href="#" class="heart d-flex justify-content-center align-items-center ">
-                                    <span><i class="ion-ios-heart"></i></span>
-                                </a> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        {% endfor %}
-</div>
-</section>
-                
+{% endfor %}
+    
+
 
 <section class="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
 <div class="container py-4">
@@ -194,4 +101,57 @@
 </div>
 </div>
 </section>
+<!-- 
+<script>
+    $("#all").on('click', function(e){
+        e.preventDefault();
+        $("#all a").addClass('active');
+        $("#featured a").removeClass('active');
+        $("#on_sale a").removeClass('active');
+        $("#new_arrival a").removeClass('active');
+
+        $("#featured_container").show();
+        $("#new_arrival_container").show();
+        $("#on_sale_container").show();
+    });
+
+    $("#featured").on('click', function(e){
+        e.preventDefault();
+        alert("clicked");
+        $("#featured a").addClass('active');
+        $("#all a").removeClass('active');
+        $("#on_sale a").removeClass('active');
+        $("#new_arrival a").removeClass('active');
+
+        $("#featured_container").show();
+        $("#new_arrival_container").hide();
+        $("#on_sale_container").hide();
+    });
+
+    $("#new_arrival").on('click', function(e){
+        e.preventDefault();
+        $("#featured a").removeClass('active');
+        $("#all a").removeClass('active');
+        $("#on_sale a").removeClass('active');
+        $("#new_arrival a").addClass('active');
+
+        $("#featured_container").hide();
+        $("#new_arrival_container").show();
+        $("#on_sale_container").hide();
+    });
+
+    $("#on_sale").on('click', function(e){
+        e.preventDefault();
+        $("#featured a").removeClass('active');
+        $("#all a").removeClass('active');
+        $("#on_sale a").addClass('active');
+        $("#new_arrival a").removeClass('active');
+
+        $("#featured_container").hide();
+        $("#new_arrival_container").hide();
+        $("#on_sale_container").show();
+    });
+
+</script> -->
+
 {% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table class="table table-striped">
+        <thead>
+            <tr>
+            <th scope="col">Order ID</th>
+            <th scope="col">Sub Total</th>
+            <th scope="col">Delivery Charge</th>
+            <th scope="col">Coupon Discount</th>
+            <th scope="col">Final Total</th>
+            <th scope="col">Status</th>
+            <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            {% for order in orders %}    
+            <td>{{order}}</td>
+            <td>{{order.sub_total}}</td>
+            <td>{{order.delivery_charge}}</td>
+            <td>{{order.coupon_discount}}</td>
+            <td>{{order.final_total}}</td>
+            <td>{{order.status}}</td>
+            <td><button class="btn btn-success">View</button></td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+{% endblock %}

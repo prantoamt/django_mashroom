@@ -17,9 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from products.views import products, home
 from products.views import single
-from carts.views import viewCart, update_cart, coupon
+from carts.views import viewCart, update_cart, coupon, getDeliveryCharge
 from orders.views import checkout
 from account.views import loginView, logoutView
+from orders.views import viewOrdersAdminInterface
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
@@ -31,11 +32,13 @@ urlpatterns = [
     url(r'^products/$', products, name='products'),
     url(r'^products/(?P<slug>[\w-]+)/$', single, name='single_product'),
     url(r'^cart/$', viewCart, name='viewCart'),
+    url(r'^cart/deliverycharge/$', getDeliveryCharge, name='delivery_charge'),
     url(r'^cart/(?P<slug>[\w-]+)/$', update_cart, name='update_cart'),
-    url(r'^coupon/$', coupon, name='coupon'),
+    url(r'^cart/coupon/code/$', coupon, name='coupon'),
     url(r'^checkout/$', checkout, name='checkout'),
     url(r'^accounts/login/$', loginView, name="login"),
     url(r'^accounts/logout/$', logoutView, name="logout"),
+    url(r'^adminorder/$', viewOrdersAdminInterface, name="orders_admin"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
