@@ -66,10 +66,10 @@
                               
                               <td class="quantity">
                                   <div class="input-group mb-3">
-                                      <a id="minus">
+                                      <a id="minus" href="">
                                         <i class="fa fa-minus ml-5 mr-2" ></i></a>
                                         <span id="quantity_value">{{item.quantity}}</span>
-                                        <a id='plus'>
+                                        <a id='plus' href="">
                                           <i class="fa fa-plus ml-2"></i>
                                         </a>
                                         <span class="ml-2" style="color: red;" id="out_of_stock"></span>
@@ -231,6 +231,7 @@
     //Increases product quantity on both front-end and database
     // Also adjusts all others fields on front-end according to the changes
     $('.table tbody').on('click', '#plus', function(e){
+        e.preventDefault();
         var currow = $(this).closest('tr'); //Get Table rows near to the cliecked event
         var product_name = currow.find('td:eq(2) h3').text(); //get the text of 3rd column
         var price = currow.find('td:eq(3) #price_value').text().trim(); ////get the text of 4th column
