@@ -19,8 +19,8 @@ from products.views import products, home
 from products.views import single
 from carts.views import viewCart, update_cart, coupon, getDeliveryCharge
 from orders.views import checkout
-from account.views import loginView, logoutView
-from orders.views import viewOrdersAdminInterface
+from account.views import loginView, logoutView, register
+from orders.views import viewOrdersAdminInterface, confirmOrder
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
@@ -38,7 +38,9 @@ urlpatterns = [
     url(r'^checkout/$', checkout, name='checkout'),
     url(r'^accounts/login/$', loginView, name="login"),
     url(r'^accounts/logout/$', logoutView, name="logout"),
+    url(r'^accounts/register/$', register, name="register"),
     url(r'^adminorder/$', viewOrdersAdminInterface, name="orders_admin"),
+    url(r'^confirmorder/$', confirmOrder, name="confirm_order"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

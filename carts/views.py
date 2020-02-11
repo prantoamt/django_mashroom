@@ -72,7 +72,7 @@ def viewCart(request):
 
 
 def update_cart(request, slug):
-    request.session.set_expiry(120000)
+    request.session.set_expiry(1200000000)
     ##Check if the method
     try:
         qty = request.GET.get('qty')
@@ -192,6 +192,7 @@ def coupon(request):
             coupon_object = Coupon.objects.get(coupon_code=coupon_code)
             if(coupon_object.active):    
                 cpn_discount = coupon_object.coupon_discount
+                print(cart.total)
                 if(cart.total > 500):
                     if cart.coupon_discount == 0:
                         cart.coupon_discount = cpn_discount
@@ -226,18 +227,5 @@ def getDeliveryCharge(request):
         response = JsonResponse(area_charge)
         return response
 
-
-
-# def confirmOrder(request):
-#     if(request.is_ajax):
-#         try:
-#             the_id = request.session['cart_id']
-#             cart = Cart.objects.get(id=the_id)
-#         except:
-#             new_cart = Cart()
-#             new_cart.save()
-#             request.session['cart_id'] = new_cart.id
-#             the_id = new_cart.id
-#             cart = Cart.objects.get(id=the_id)
 
 

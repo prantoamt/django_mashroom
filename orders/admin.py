@@ -4,8 +4,8 @@ from .models import Order, Coupon
 class orderAdmin(admin.ModelAdmin):
         date_hierarchy = 'timestamp'
         search_fields = ['status']
-        list_display = ['order_id', 'user', 'cart', 'sub_total', 'delivery_charge', 'coupon_discount', 'final_total', 'status']
-        # list_editable = ['price', 'sale', 'stock', 'active']
+        list_display = ['order_id', 'user', 'cart', 'sub_total', 'delivery_charge', 'coupon_discount', 'final_total', 'status', 'updated']
+        list_editable = ['status']
         # list_filter = ['active', 'stock', 'price']
         readonly_fields = ['timestamp', 'updated']
         class meta:

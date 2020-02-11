@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% load static %}
+	<link rel="stylesheet" type="text/css" href=" {% static 'vendor/bootstrap/css/bootstrap.min.css'%}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/animate/animate.css' %}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/animsition/css/animsition.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/daterangepicker/daterangepicker.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+{% block content %}    
+        <!-- Sign up form -->
+        <section style="padding: 0% 40% 5% 40%;" class="signup">
+            <div class="container">
+                <div class="signup-content">
+                    <div class="signup-form">
+                        <h2 class="form-title">Sign up</h2>
+                        <form method="POST" class="register-form" id="register-form" action="{% url 'register' %}"> {% csrf_token %}
+                            <div class="form-group">
+                                <label>{{form.username.label}}</label>
+                                <div class="w-100"></div>
+                                {{form.username}}
+                                {% if form.errors.username %}
+                                <span style="color: red;">{{form.errors.username}}</span>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label>{{form.first_name.label}}</label>
+                                <div class="w-100"></div>
+                                {{form.first_name}}
+                                {% if form.errors.first_name %}
+                                <span style="color: red;">{{form.errors.first_name}}</span>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label >{{form.last_name.label}}</label>
+                                <div class="w-100"></div>
+                                {{form.last_name}}
+                                {% if form.errors.last_name %}
+                                <span style="color: red;">{{form.errors.last_name}}</span>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label>{{form.email.label}}</label>
+                                <div class="w-100"></div>
+                                {{form.email}}
+                                {% if form.errors.email %}
+                                <span style="color: red;">{{form.errors.email}}</span>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label>{{form.password1.label}}</label>
+                                <div class="w-100"></div>
+                                {{form.password1}}
+                                {% if form.errors.password1 %}
+                                <span style="color: red;">{{form.errors.password1}}</span>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label>{{form.password2.label}}</label>
+                                <div class="w-100"></div>
+                                {{form.password2}}
+                                {% if form.errors.password2 %}
+                                <span style="color: red;">{{form.errors.password2}}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- <div class="form-group">
+                                <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
+                                <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>
+                            </div> -->
+                            <div class="form-group form-button">
+                                <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+{% endblock %}
+
+    
+</body>
+</html>

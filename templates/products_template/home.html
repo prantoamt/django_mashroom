@@ -152,7 +152,7 @@
                         {% with key=item.id %}
                         {% for image in item.productimage_set.all %}
                         {% if image.thumbnail == True and image.active == True %}
-                      <a href="{% url 'single_product' item.slug %}" class="img-prod"><img class="img-fluid" src="/media/{{image.image}}" alt="Colorlib Template">
+                      <a href="{% url 'single_product' item.slug %}" class="img-prod"><img class="img-fluid" src="/media/{{image.image}}">
                         {% if item.sale != item.price %}
                         <span class="status">{{percentage_discount|dict_key:key}}%</span>
                         {% endif %}

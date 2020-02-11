@@ -7,150 +7,215 @@
     <div class="container">
         <div class="row justify-content-center">
         <div class="col-xl-7 ftco-animate">
-                <form action="#" class="billing-form">
+<form action="#" class="billing-form"> {% csrf_token %}
                     <h3 class="mb-4 billing-heading">Billing Details</h3>
         <div class="row align-items-end">
-            <div class="col-md-6">
+        <div class="col-md-6">
             <div class="form-group">
-                <label for="firstname">Firt Name</label>
-            <input type="text" class="form-control" placeholder="" value={{order.user.first_name}}>
+                <label for="firstname">First Name*</label>
+            <input id="first_name_field" type="text" class="form-control" placeholder="" value='{{order.user.first_name}}' readonly>
+            <span style="color: red;" id="first_name_warning"></span>
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label for="lastname">Last Name</label>
-            <input type="text" class="form-control" placeholder="" value={{order.user.last_name}}>
+                <label for="lastname">Last Name*</label>
+            <input id="last_name_field" type="text" class="form-control" placeholder="" value='{{order.user.last_name}}' readonly>
+            <span style="color: red;" id="last_name_warning"></span>
             </div>
         </div>
         <div class="w-100"></div>
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-group">
-                    <label for="country">State / Country</label>
+                    <label for="district">District</label>
                     <div class="select-wrap">
-                <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                <select name="" id="" class="form-control">
-                    <option value="">France</option>
-                    <option value="">Italy</option>
-                    <option value="">Philippines</option>
-                    <option value="">South Korea</option>
-                    <option value="">Hongkong</option>
-                    <option value="">Japan</option>
-                </select>
+                    <input type="text" value="{{order.district}}" readonly>
                 </div>
+            </div>    
+        </div>
+        <div class="col-md-6">
+                <div class="form-group">
+                    <label for="area">Area</label>
+                    <div class="select-wrap">
+                    <input type="text" value="{{order.area}}" readonly>
                 </div>
-            </div>
-            <div class="w-100"></div>
-            <div class="col-md-6">
-                <div class="form-group">
-                <label for="streetaddress">Street Address</label>
-            <input type="text" class="form-control" placeholder="House number and street name">
-            </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-            <input type="text" class="form-control" placeholder="Appartment, suite, unit etc: (optional)">
-            </div>
-            </div>
-            <div class="w-100"></div>
-            <div class="col-md-6">
-                <div class="form-group">
-                <label for="towncity">Town / City</label>
-            <input type="text" class="form-control" placeholder="">
-            </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="postcodezip">Postcode / ZIP *</label>
-            <input type="text" class="form-control" placeholder="">
-            </div>
-            </div>
-            <div class="w-100"></div>
-            <div class="col-md-6">
-            <div class="form-group">
-                <label for="phone">Phone</label>
-            <input type="text" class="form-control" placeholder="">
-            </div>
+            </div>    
+        </div>
+        
+
+        <div class="w-100"></div>
+        <div class="col-md-12">
+        <div class="form-group">
+            <label for="streetaddress">Shipping Address*</label>
+        <input id="address_field" type="text" class="form-control" placeholder="House number and street name">
+        <span style="color: red;" id="address_warning"></span>
+        </div>
+        </div>
+    
+        <div class="w-100"></div>
+        <div class="col-md-6">
+        <div class="form-group">
+            <label for="phone">Phone*</label>
+        <input id="phone_no_field" type="text" class="form-control" placeholder="01XXXXXXXXX">
+        <span style="color: red;" id="phone_no_warning"></span>
+        </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label for="emailaddress">Email Address</label>
-            <input type="text" class="form-control" placeholder="" value={{order.user.email_address}}>
-            </div>
+                <label for="postcodezip">Postcode / ZIP *</label>
+        <input id="zip_code_field" type="text" class="form-control" placeholder="e.g. 1229">
+        <span style="color: red;" id="zip_code_warning"></span>
         </div>
-        <div class="w-100"></div>
         </div>
-    </form><!-- END -->
-            </div>
-            <div class="col-xl-5">
-    <div class="row mt-5 pt-3">
-        <div class="col-md-12 d-flex mb-5">
-            <div class="cart-detail cart-total p-3 p-md-4">
-                <h3 class="billing-heading mb-4">
-                    Cart Total
-                    <span class="badge badge-secondary badge-pill">
-                        {% if not request.session.item_count %}
-                        0
-                        {% else %}
-                        {{request.session.item_count}}
-                        {% endif %}
-                    </span>
-                </h3>
-                <p class="d-flex">
-                    <ul class="list-group mb-3">
-                    {% for item in cart.cartitem_set.all %}
-                    {% with key=item.product.id %}
-                    <li class="list-group-item d-flex justify-content-between lh-condensed">
-                        <div>
-                            <h6 class="my-0">{{item.product.product_name}}</h6>
-                            {% if item.product.sale != item.product.price %}
-                            <small class="text-muted"><span class="badge badge-secondary">Including {{discount|dict_key:key}}% discount</span></small>
-                            {% endif %}
-                    {% endwith %}        
-                        </div>
-                        <span class="text-muted">BDT {{item.line_total}}</span>
-                    </li>
-                    {% endfor %}                    
-                </p>
-                <p class="d-flex">
-            
-                    <span>Subtotal</span>
-                    <span>৳{{order.sub_total}}</span>
-                </p>
-                <p class="d-flex">
-                    <span>Delivery</span>
-                    <span>৳{{order.delivery_charge}}</span>
-                </p>
-                <p class="d-flex">
-                    <span>Discount</span>
-                    <span>৳{{order.coupon_discount}}</span>                    
-                </p>
-                <!-- {% if order.coupon_discount > 0 %}
-                    <small class="text-muted"><span class="badge badge-success">Coupon discount</span></small>
-                {% endif %} -->
-                <hr>
-                <p class="d-flex total-price">
-                    <span>Total</span>
-                    <span>৳{{order.final_total}}</span>
-                </p>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="cart-detail p-3 p-md-4">
-                <h3 class="billing-heading mb-4">Payment Method</h3>
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    <div class="radio">
-                                        <label><input type="radio" name="optradio" class="mr-2"> Cash On Delivery </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <p><a href="#"class="btn btn-primary py-3 px-4">Place an order</a></p>
-                        </div>
+    <div class="w-100"></div>    
+    <div class="col-md-12">
+        <div class="form-group">
+            <label for="emailaddress">Email Address*</label>
+        <input id="email_address_field" type="text" class="form-control" placeholder="" value='{{order.user.email}}' readonly>
+        <span style="color: red;" id="email_address_warning"></span>
         </div>
     </div>
+    <div class="w-100"></div>
+    </div>
+
+</form>    <!-- END -->
+        </div>
+        <div class="col-xl-5">
+<div class="row mt-5 pt-3">
+    <div class="col-md-12 d-flex mb-5">
+        <div class="cart-detail cart-total p-3 p-md-4">
+            <h3 class="billing-heading mb-4">
+                Cart Total
+                <span class="badge badge-secondary badge-pill">
+                    {% if not request.session.item_count %}
+                    0
+                    {% else %}
+                    {{request.session.item_count}}
+                    {% endif %}
+                </span>
+            </h3>
+            <p class="d-flex">
+                <ul class="list-group mb-3">
+                {% for item in cart.cartitem_set.all %}
+                {% with key=item.product.id %}
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                        <h6 class="my-0">{{item.product.product_name}}</h6>
+                        {% if item.product.sale != item.product.price %}
+                        <small class="text-muted"><span class="badge badge-secondary">Including {{discount|dict_key:key}}% discount</span></small>
+                        {% endif %}
+                {% endwith %}        
+                    </div>
+                    <span class="text-muted">BDT {{item.line_total}}</span>
+                </li>
+                {% endfor %}                    
+            </p>
+            <p class="d-flex">
+        
+                <span>Subtotal</span>
+                <span>৳{{order.sub_total}}</span>
+            </p>
+            <p class="d-flex">
+                <span>Delivery</span>
+                <span>৳{{order.delivery_charge}}</span>
+            </p>
+            <p class="d-flex">
+                <span>Discount</span>
+                <span>৳{{order.coupon_discount}}</span>                    
+            </p>
+            <!-- {% if order.coupon_discount > 0 %}
+                <small class="text-muted"><span class="badge badge-success">Coupon discount</span></small>
+            {% endif %} -->
+            <hr>
+            <p class="d-flex total-price">
+                <span>Total</span>
+                <span>৳{{order.final_total}}</span>
+            </p>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="cart-detail p-3 p-md-4">
+        <h3 class="billing-heading mb-4">Payment Method</h3>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="radio">
+                        <label><input id="payment_method_feild" type="radio" name="optradio" class="mr-2" value="Cash on delivery"> Cash On Delivery </label>
+                    </div>
+                    <span style="color: red;" id="payment_method_warning"></span>
+                </div>
+            </div>
+            <p><a id="place_order_button" href="#" class="btn btn-primary py-3 px-4">Place an order</a></p>
+        </div>
+    </div>
+</div>
 </div> <!-- .col-md-8 -->
 </div>
 </div>
 </section> <!-- .section -->
-  
+
+<script>
+    $("#place_order_button").on('click', function(e){
+        e.preventDefault();
+        var first_name = $("#first_name_field").val();
+        var last_name = $("#last_name_field").val();
+        var address = $("#address_field").val(); 
+        var phone = $("#phone_no_field").val(); 
+        var zip_code = $("#zip_code_field").val(); 
+        var email = $("#email_field").val();
+        var payment_method = $("#payment_method_feild:checked").val();  
+        var valid_address = false;
+        var valid_phone = false;
+        var valid_zip = false;
+        var valid_payment = false;
+        var unhashed_address = "";
+        if(address.length <=0 ){
+            $("#address_warning").text("**Shipping address is required");         
+            valid_address = false;
+        }
+        else{
+            address = address.split('#');
+            for (let i = 0; i < address.length; i++){
+                unhashed_address = unhashed_address + address[i]
+            }
+            $("#address_warning").text("");         
+            valid_address = true;
+        }
+        if(phone.length != 11 || Number.isInteger(parseInt(phone))== false){
+        
+            $("#phone_no_warning").text("**Enter a valid phone no");         
+            valid_phone = false;
+        }
+        else{
+            $("#phone_no_warning").text("");         
+            valid_phone = true;
+        }
+        if(zip_code.length <= 0 || zip_code.length > 4 ){
+            $("#zip_code_warning").text("**Enter a valid Postal Code");         
+            valid_zip = false;
+        }
+        else{
+            $("#zip_code_warning").text("");         
+            valid_zip = true;
+        }
+
+        if(payment_method== undefined){
+            $("#payment_method_warning").text("**Select payment mathod");         
+            valid_payment = false;
+        }
+        else{
+            $("#payment_method_warning").text("");         
+            valid_payment = true;
+        }
+
+        if(valid_phone && valid_address && valid_zip && valid_payment){
+            
+            window.location.href = "{% url 'confirm_order' %}?adrs="+unhashed_address+"&phn="+phone+"&zip="+zip_code+"&paymnt="+payment_method;
+        }
+        else{
+            alert("All ** marks are required");
+        }    
+                     
+    });
+</script>
+
 {% endblock %}

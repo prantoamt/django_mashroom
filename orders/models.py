@@ -11,12 +11,14 @@ User = get_user_model()
 STATUS_CHOICES = (
     ("Started", "Started"),
     ("Confirmed", "Confirmed"),
+    ("Started_Shipping", "Started_Shipping"),
+    ("Shipped", "Shipped"),
     ("Abandoned", "Abandoned"),
     ("Finished", "Finished"),
 )
 
 PAYMENT_CHOICES = (
-    ("Cash in delivery", "Cash in delivery"),
+    ("Cash on delivery", "Cash on delivery"),
     ("Bkash", "Bkash"),
     ("Rocket", "Rocket"),
 )
@@ -26,6 +28,11 @@ class Order(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete = models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     #address
+    address = models.TextField(default="")
+    district = models.CharField(max_length=120, default="")
+    area = models.CharField(max_length=120, default="")
+    zipcode = models.CharField(max_length=120, default="")
+    phone_no = models.CharField(max_length=120, default="")
     order_id = models.CharField(max_length=120, default="ABC", unique=True)
     sub_total = models.DecimalField(max_digits=1000, decimal_places=2, default=0.00)
     delivery_charge = models.DecimalField(max_digits=1000, decimal_places=2, default=0.00)

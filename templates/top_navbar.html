@@ -33,9 +33,9 @@
           <!-- <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li> -->
           <li class="nav-item">
               {% if not user.is_authenticated %}
-              <a href="#" class="nav-link">Sign-In</a>
+              <a href="{% url 'register' %}" class="nav-link">Sign-up</a>
                 {% else %}
-              <a href="#" class="nav-link">My Account</a>
+              <a href="#" class="nav-link">{{user.username}}'s Account</a>
                 {% endif %}
             </a>
           </li>

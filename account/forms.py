@@ -1,8 +1,8 @@
 from django import forms
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 
-User = get_user_model()
 
 class loginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(
@@ -17,7 +17,6 @@ class loginForm(forms.Form):
             "placeholder": "Password"
         }
     ))
-
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
@@ -40,3 +39,12 @@ class loginForm(forms.Form):
             pass
         else:
             return password    
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "username", 'email', )

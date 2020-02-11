@@ -138,6 +138,7 @@
                       <p class="d-flex">
                           <span>Subtotal</span>
                           ৳<span id='sub_total'>{{cart.total|add:cart.coupon_discount}}</span>
+                          <span class="badge badge-success">{{discount|dict_key:"total_discount"}}% savings</span>
                       </p>
                       <p class="d-flex">
                           <span>Delivery</span>
@@ -155,7 +156,7 @@
                       <p class="d-flex total-price">
                           <span>Total</span>
                           ৳<span id="total">{{cart.total}}</span>
-                          <span class="badge badge-success">{{discount|dict_key:"total_discount"}}% savings</span>
+                          
                       </p>
                   </div>
                   <p><a id="proceed_to_order" href="" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>
@@ -385,10 +386,13 @@
     $("#proceed_to_order").on('click', function(e){
       e.preventDefault();
       var delivery_charge = parseInt($("#delivery_charge_cart").text());
+      var delivery_charge_estimate = parseInt($('#delivery_charge').val());
       var sub_total = parseInt($("#sub_total").text());
-      if( delivery_charge > 0 ){
+      var district = $('#district_select option:selected').text();
+      var area = $("#area_select option:selected").text();
+      if( delivery_charge > 0 && delivery_charge_estimate > 0){
         var URL = "{% url 'checkout' %}";
-        window.location.href = "{% url 'checkout' %}?dlvry="+delivery_charge+"&sbtotal="+sub_total;
+        window.location.href = "{% url 'checkout' %}?dlvry="+delivery_charge+"&sbtotal="+sub_total+"&dst="+district+"&area="+area;
 
       }
       else{
