@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-2">
+            
+        </div>
+        <div class="col-sm-8">
+            <h5>Order Information:</h5>
+            <table style="color: black;">
+               
+                <tbody>
+                    <tr>
+                        <td> <p>Order ID: </p> </td>
+                        <td> <p>{{order.order_id}}</p> </td>
+                    </tr>
+                    <tr>
+                        <td> <p class="mr-2">Order name: </p> </td>
+                        <td> <p>{{order.user.first_name}} {{order.user.last_name}}</p> </td>
+                    </tr>
+                    <tr>
+                        <td> <p>Email: </p></td>
+                        <td><p>{{order.user.email}}</p></td>
+                    </tr>
+                    <tr>
+                        <td> <p>Phone #: </p></td>
+                        <td><p>{{order.phone_no}}</p></td>
+                    </tr>
+                    <tr>
+                        <td> <p>District: </p></td>
+                        <td><p>{{order.district}}</p></td>
+                    </tr>
+                    <tr>
+                        <td> <p>Area: </p></td>
+                        <td><p>{{order.area}}</p></td>
+                    </tr>        
+                    
+                    <tr>
+                        <td> <p>Address: </p></td>
+                        <td><p>{{order.address}}</p></td>
+                    </tr>
+                    <tr>
+                        <td> <p>Postal code: </p></td>
+                        <td><p>{{order.zipcode}}</p></td>
+                    </tr>              
+                                
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div style="padding: 10px;" class="container">
+    
+<div class="row">
+        <h5>Order details:</h5>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Product name</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price/unit</th>
+                <th scope="col">Total price</th>
+                </tr>
+            </thead>
+            <tbody style="line-height: 0em; color: black;">
+                {% for item in order.cart.cartitem_set.all %}    
+                <tr>
+                <th scope="row">{{forloop.counter}}</th>    
+                <td>{{item.product.product_name}}</td>
+                <td>{{item.quantity}}</td>
+                <td>{% if item.product.category == 'on sale' %}
+                    {{item.product.sale}}
+                    {% else %}
+                    {{item.product.price}}
+                    {% endif %}
+                </td>
+                <td>{{item.line_total}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Sub total</td>
+                    <td>{{order.sub_total}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Delivery Charge</td>
+                    <td>{{order.delivery_charge}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Coupon discount</td>
+                    <td>{{order.coupon_discount}}</td>
+                </tr>
+                <tr class="table-success">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Final total</td>
+                    <td>{{order.final_total}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                <form action="{% url 'change_order_status'  order.order_id %}" method="POST"> {% csrf_token %}
+                    <td>
+                        <select name="dropdown" id="">
+                            <option value="{{order_status}}" selected>{{order_status}}</option>
+                            {% if order_status == 'Started' %}
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Start_Shipping">Start Shipping</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Abandoned">Abandoned</option>
+                            {% elif order_status == 'Confirmed' %}
+                            <option value="Start_Shipping">Start Shipping</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Abandoned">Abandoned</option>
+                            {% elif order_status == 'Started_Shipping' %}
+                            <option value="Shipped">Shipped</option>
+                            <option value="Abandoned">Abandoned</option>
+                            {% elif order_status == 'Shipped' %}
+                            <option value="Abandoned">Abandoned</option>
+                            {% elif order_status == 'Abandoned' %}
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Start_Shipping">Start Shipping</option>
+                            <option value="Shipped">Shipped</option>
+                            
+                            {% endif %}
+
+                        </select>
+                    </td>
+                    <td> <button type="submit" class="btn btn-success"> Save changes </button> </td>
+                </form>
+                    <td>
+                        <a href="{% url 'generate_invoice' order.order_id %}"><button class="btn btn-success">Generate Invoice</button></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

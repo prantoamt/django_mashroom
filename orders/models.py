@@ -14,7 +14,6 @@ STATUS_CHOICES = (
     ("Started_Shipping", "Started_Shipping"),
     ("Shipped", "Shipped"),
     ("Abandoned", "Abandoned"),
-    ("Finished", "Finished"),
 )
 
 PAYMENT_CHOICES = (
@@ -40,6 +39,7 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=120, choices=PAYMENT_CHOICES, default="Cash in delivery")
     final_total = models.DecimalField(max_digits=1000, decimal_places=2, default=0.00)
     status = models.CharField(max_length=120, choices=STATUS_CHOICES, default="Started")
+    viewed = models.BooleanField(default=False)
     
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

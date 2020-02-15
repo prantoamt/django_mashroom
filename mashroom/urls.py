@@ -20,7 +20,7 @@ from products.views import single
 from carts.views import viewCart, update_cart, coupon, getDeliveryCharge
 from orders.views import checkout
 from account.views import loginView, logoutView, register
-from orders.views import viewOrdersAdminInterface, confirmOrder
+from orders.views import viewOrdersAdminInterface, confirmOrder, orderDetails, generateInvoice, changeOrderStatus
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
@@ -40,7 +40,10 @@ urlpatterns = [
     url(r'^accounts/logout/$', logoutView, name="logout"),
     url(r'^accounts/register/$', register, name="register"),
     url(r'^adminorder/$', viewOrdersAdminInterface, name="orders_admin"),
+    url(r'^adminorder/details(?P<order_id>[\w-]+)/$', orderDetails, name="order_details"),
     url(r'^confirmorder/$', confirmOrder, name="confirm_order"),
+    url(r'^invoice/(?P<order_id>[\w-]+)/$', generateInvoice, name="generate_invoice"),
+    url(r'^adminorder/details/status_change(?P<order_id>[\w-]+)/$', changeOrderStatus, name="change_order_status"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
